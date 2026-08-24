@@ -69,6 +69,106 @@ impl ::prost::Name for Signature {
         "/xmtp.message_contents.Signature".into()
     }
 }
+/// Ciphertext represents encrypted payload.
+/// It is definited as a union to support cryptographic algorithm agility.
+/// The payload is accompanied by the cryptographic parameters
+/// required by the chosen encryption scheme.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Ciphertext {
+    #[prost(oneof = "ciphertext::Union", tags = "1")]
+    pub union: ::core::option::Option<ciphertext::Union>,
+}
+/// Nested message and enum types in `Ciphertext`.
+pub mod ciphertext {
+    /// Encryption: AES256-GCM
+    /// Key derivation function: HKDF-SHA256
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct Aes256gcmHkdfsha256 {
+        /// 32 bytes
+        #[prost(bytes = "vec", tag = "1")]
+        pub hkdf_salt: ::prost::alloc::vec::Vec<u8>,
+        /// 12 bytes
+        #[prost(bytes = "vec", tag = "2")]
+        pub gcm_nonce: ::prost::alloc::vec::Vec<u8>,
+        /// encrypted payload
+        #[prost(bytes = "vec", tag = "3")]
+        pub payload: ::prost::alloc::vec::Vec<u8>,
+    }
+    impl ::prost::Name for Aes256gcmHkdfsha256 {
+        const NAME: &'static str = "Aes256gcmHkdfsha256";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.Ciphertext.Aes256gcmHkdfsha256".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.Ciphertext.Aes256gcmHkdfsha256".into()
+        }
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Union {
+        #[prost(message, tag = "1")]
+        Aes256GcmHkdfSha256(Aes256gcmHkdfsha256),
+    }
+}
+impl ::prost::Name for Ciphertext {
+    const NAME: &'static str = "Ciphertext";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.Ciphertext".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.Ciphertext".into()
+    }
+}
+/// SignedEciesCiphertext represents an ECIES encrypted payload and a signature
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SignedEciesCiphertext {
+    /// serialized Ecies message
+    #[prost(bytes = "vec", tag = "1")]
+    pub ecies_bytes: ::prost::alloc::vec::Vec<u8>,
+    /// signature of sha256(ecies_bytes) signed with the IdentityKey
+    #[prost(message, optional, tag = "2")]
+    pub signature: ::core::option::Option<Signature>,
+}
+/// Nested message and enum types in `SignedEciesCiphertext`.
+pub mod signed_ecies_ciphertext {
+    /// Ecies is ciphertext encrypted using ECIES with a MAC
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct Ecies {
+        /// 65 bytes
+        #[prost(bytes = "vec", tag = "1")]
+        pub ephemeral_public_key: ::prost::alloc::vec::Vec<u8>,
+        /// 16 bytes
+        #[prost(bytes = "vec", tag = "2")]
+        pub iv: ::prost::alloc::vec::Vec<u8>,
+        /// 32 bytes
+        #[prost(bytes = "vec", tag = "3")]
+        pub mac: ::prost::alloc::vec::Vec<u8>,
+        /// encrypted payload with block size of 16
+        #[prost(bytes = "vec", tag = "4")]
+        pub ciphertext: ::prost::alloc::vec::Vec<u8>,
+    }
+    impl ::prost::Name for Ecies {
+        const NAME: &'static str = "Ecies";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.SignedEciesCiphertext.Ecies".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.SignedEciesCiphertext.Ecies".into()
+        }
+    }
+}
+impl ::prost::Name for SignedEciesCiphertext {
+    const NAME: &'static str = "SignedEciesCiphertext";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.SignedEciesCiphertext".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.SignedEciesCiphertext".into()
+    }
+}
 /// UnsignedPublicKey represents a generalized public key,
 /// defined as a union to support cryptographic algorithm agility.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -218,106 +318,6 @@ impl ::prost::Name for PublicKeyBundle {
     }
     fn type_url() -> ::prost::alloc::string::String {
         "/xmtp.message_contents.PublicKeyBundle".into()
-    }
-}
-/// Ciphertext represents encrypted payload.
-/// It is definited as a union to support cryptographic algorithm agility.
-/// The payload is accompanied by the cryptographic parameters
-/// required by the chosen encryption scheme.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct Ciphertext {
-    #[prost(oneof = "ciphertext::Union", tags = "1")]
-    pub union: ::core::option::Option<ciphertext::Union>,
-}
-/// Nested message and enum types in `Ciphertext`.
-pub mod ciphertext {
-    /// Encryption: AES256-GCM
-    /// Key derivation function: HKDF-SHA256
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct Aes256gcmHkdfsha256 {
-        /// 32 bytes
-        #[prost(bytes = "vec", tag = "1")]
-        pub hkdf_salt: ::prost::alloc::vec::Vec<u8>,
-        /// 12 bytes
-        #[prost(bytes = "vec", tag = "2")]
-        pub gcm_nonce: ::prost::alloc::vec::Vec<u8>,
-        /// encrypted payload
-        #[prost(bytes = "vec", tag = "3")]
-        pub payload: ::prost::alloc::vec::Vec<u8>,
-    }
-    impl ::prost::Name for Aes256gcmHkdfsha256 {
-        const NAME: &'static str = "Aes256gcmHkdfsha256";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.Ciphertext.Aes256gcmHkdfsha256".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.Ciphertext.Aes256gcmHkdfsha256".into()
-        }
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum Union {
-        #[prost(message, tag = "1")]
-        Aes256GcmHkdfSha256(Aes256gcmHkdfsha256),
-    }
-}
-impl ::prost::Name for Ciphertext {
-    const NAME: &'static str = "Ciphertext";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.Ciphertext".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.Ciphertext".into()
-    }
-}
-/// SignedEciesCiphertext represents an ECIES encrypted payload and a signature
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct SignedEciesCiphertext {
-    /// serialized Ecies message
-    #[prost(bytes = "vec", tag = "1")]
-    pub ecies_bytes: ::prost::alloc::vec::Vec<u8>,
-    /// signature of sha256(ecies_bytes) signed with the IdentityKey
-    #[prost(message, optional, tag = "2")]
-    pub signature: ::core::option::Option<Signature>,
-}
-/// Nested message and enum types in `SignedEciesCiphertext`.
-pub mod signed_ecies_ciphertext {
-    /// Ecies is ciphertext encrypted using ECIES with a MAC
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct Ecies {
-        /// 65 bytes
-        #[prost(bytes = "vec", tag = "1")]
-        pub ephemeral_public_key: ::prost::alloc::vec::Vec<u8>,
-        /// 16 bytes
-        #[prost(bytes = "vec", tag = "2")]
-        pub iv: ::prost::alloc::vec::Vec<u8>,
-        /// 32 bytes
-        #[prost(bytes = "vec", tag = "3")]
-        pub mac: ::prost::alloc::vec::Vec<u8>,
-        /// encrypted payload with block size of 16
-        #[prost(bytes = "vec", tag = "4")]
-        pub ciphertext: ::prost::alloc::vec::Vec<u8>,
-    }
-    impl ::prost::Name for Ecies {
-        const NAME: &'static str = "Ecies";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.SignedEciesCiphertext.Ecies".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.SignedEciesCiphertext.Ecies".into()
-        }
-    }
-}
-impl ::prost::Name for SignedEciesCiphertext {
-    const NAME: &'static str = "SignedEciesCiphertext";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.SignedEciesCiphertext".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.SignedEciesCiphertext".into()
     }
 }
 /// Unsealed invitation V1
@@ -545,383 +545,6 @@ impl ::prost::Name for ConversationReference {
         "/xmtp.message_contents.ConversationReference".into()
     }
 }
-/// PrivateKey generalized to support different key types
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct SignedPrivateKey {
-    /// time the key was created
-    #[prost(uint64, tag = "1")]
-    pub created_ns: u64,
-    /// public key for this private key
-    #[prost(message, optional, tag = "3")]
-    pub public_key: ::core::option::Option<SignedPublicKey>,
-    /// private key
-    #[prost(oneof = "signed_private_key::Union", tags = "2")]
-    pub union: ::core::option::Option<signed_private_key::Union>,
-}
-/// Nested message and enum types in `SignedPrivateKey`.
-pub mod signed_private_key {
-    /// EC: SECP256k1
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct Secp256k1 {
-        /// D big-endian, 32 bytes
-        #[prost(bytes = "vec", tag = "1")]
-        pub bytes: ::prost::alloc::vec::Vec<u8>,
-    }
-    impl ::prost::Name for Secp256k1 {
-        const NAME: &'static str = "Secp256k1";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.SignedPrivateKey.Secp256k1".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.SignedPrivateKey.Secp256k1".into()
-        }
-    }
-    /// private key
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum Union {
-        #[prost(message, tag = "2")]
-        Secp256k1(Secp256k1),
-    }
-}
-impl ::prost::Name for SignedPrivateKey {
-    const NAME: &'static str = "SignedPrivateKey";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.SignedPrivateKey".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.SignedPrivateKey".into()
-    }
-}
-/// PrivateKeyBundle wraps the identityKey and the preKeys,
-/// enforces usage of signed keys.
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct PrivateKeyBundleV2 {
-    #[prost(message, optional, tag = "1")]
-    pub identity_key: ::core::option::Option<SignedPrivateKey>,
-    /// all the known pre-keys, newer keys first,
-    #[prost(message, repeated, tag = "2")]
-    pub pre_keys: ::prost::alloc::vec::Vec<SignedPrivateKey>,
-}
-impl ::prost::Name for PrivateKeyBundleV2 {
-    const NAME: &'static str = "PrivateKeyBundleV2";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.PrivateKeyBundleV2".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.PrivateKeyBundleV2".into()
-    }
-}
-/// LEGACY: PrivateKey generalized to support different key types
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct PrivateKey {
-    /// time the key was created
-    #[prost(uint64, tag = "1")]
-    pub timestamp: u64,
-    /// public key for this private key
-    #[prost(message, optional, tag = "3")]
-    pub public_key: ::core::option::Option<PublicKey>,
-    /// private key
-    #[prost(oneof = "private_key::Union", tags = "2")]
-    pub union: ::core::option::Option<private_key::Union>,
-}
-/// Nested message and enum types in `PrivateKey`.
-pub mod private_key {
-    /// EC: SECP256k1
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct Secp256k1 {
-        /// D big-endian, 32 bytes
-        #[prost(bytes = "vec", tag = "1")]
-        pub bytes: ::prost::alloc::vec::Vec<u8>,
-    }
-    impl ::prost::Name for Secp256k1 {
-        const NAME: &'static str = "Secp256k1";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.PrivateKey.Secp256k1".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.PrivateKey.Secp256k1".into()
-        }
-    }
-    /// private key
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum Union {
-        #[prost(message, tag = "2")]
-        Secp256k1(Secp256k1),
-    }
-}
-impl ::prost::Name for PrivateKey {
-    const NAME: &'static str = "PrivateKey";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.PrivateKey".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.PrivateKey".into()
-    }
-}
-/// LEGACY: PrivateKeyBundleV1 wraps the identityKey and the preKeys
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct PrivateKeyBundleV1 {
-    #[prost(message, optional, tag = "1")]
-    pub identity_key: ::core::option::Option<PrivateKey>,
-    /// all the known pre-keys, newer keys first,
-    #[prost(message, repeated, tag = "2")]
-    pub pre_keys: ::prost::alloc::vec::Vec<PrivateKey>,
-}
-impl ::prost::Name for PrivateKeyBundleV1 {
-    const NAME: &'static str = "PrivateKeyBundleV1";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.PrivateKeyBundleV1".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.PrivateKeyBundleV1".into()
-    }
-}
-/// Versioned PrivateKeyBundle
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct PrivateKeyBundle {
-    #[prost(oneof = "private_key_bundle::Version", tags = "1, 2")]
-    pub version: ::core::option::Option<private_key_bundle::Version>,
-}
-/// Nested message and enum types in `PrivateKeyBundle`.
-pub mod private_key_bundle {
-    #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Version {
-        #[prost(message, tag = "1")]
-        V1(super::PrivateKeyBundleV1),
-        #[prost(message, tag = "2")]
-        V2(super::PrivateKeyBundleV2),
-    }
-}
-impl ::prost::Name for PrivateKeyBundle {
-    const NAME: &'static str = "PrivateKeyBundle";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.PrivateKeyBundle".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.PrivateKeyBundle".into()
-    }
-}
-/// PrivateKeyBundle encrypted with key material generated by
-/// signing a randomly generated "pre-key" with the user's wallet,
-/// i.e. EIP-191 signature of a "storage signature" message with
-/// the pre-key embedded in it.
-/// (see xmtp-js::PrivateKeyBundle.toEncryptedBytes for details)
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct EncryptedPrivateKeyBundleV1 {
-    /// randomly generated pre-key
-    ///
-    /// 32 bytes
-    #[prost(bytes = "vec", tag = "1")]
-    pub wallet_pre_key: ::prost::alloc::vec::Vec<u8>,
-    /// MUST contain encrypted PrivateKeyBundle
-    #[prost(message, optional, tag = "2")]
-    pub ciphertext: ::core::option::Option<Ciphertext>,
-}
-impl ::prost::Name for EncryptedPrivateKeyBundleV1 {
-    const NAME: &'static str = "EncryptedPrivateKeyBundleV1";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.EncryptedPrivateKeyBundleV1".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.EncryptedPrivateKeyBundleV1".into()
-    }
-}
-/// Versioned encrypted PrivateKeyBundle
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct EncryptedPrivateKeyBundle {
-    #[prost(oneof = "encrypted_private_key_bundle::Version", tags = "1")]
-    pub version: ::core::option::Option<encrypted_private_key_bundle::Version>,
-}
-/// Nested message and enum types in `EncryptedPrivateKeyBundle`.
-pub mod encrypted_private_key_bundle {
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum Version {
-        #[prost(message, tag = "1")]
-        V1(super::EncryptedPrivateKeyBundleV1),
-    }
-}
-impl ::prost::Name for EncryptedPrivateKeyBundle {
-    const NAME: &'static str = "EncryptedPrivateKeyBundle";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.EncryptedPrivateKeyBundle".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.EncryptedPrivateKeyBundle".into()
-    }
-}
-/// PrivatePreferencesAction is a message used to update the client's preference
-/// store.
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct PrivatePreferencesAction {
-    #[prost(
-        oneof = "private_preferences_action::MessageType",
-        tags = "1, 2, 3, 4, 5, 6"
-    )]
-    pub message_type: ::core::option::Option<private_preferences_action::MessageType>,
-}
-/// Nested message and enum types in `PrivatePreferencesAction`.
-pub mod private_preferences_action {
-    /// Allow 1:1 direct message (DM) access
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct AllowAddress {
-        /// Add the given wallet addresses to the allow list
-        #[prost(string, repeated, tag = "1")]
-        pub wallet_addresses: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    }
-    impl ::prost::Name for AllowAddress {
-        const NAME: &'static str = "AllowAddress";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.PrivatePreferencesAction.AllowAddress".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.PrivatePreferencesAction.AllowAddress".into()
-        }
-    }
-    /// Deny (block) 1:1 direct message (DM) access
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct DenyAddress {
-        /// Add the given wallet addresses to the deny list
-        #[prost(string, repeated, tag = "1")]
-        pub wallet_addresses: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    }
-    impl ::prost::Name for DenyAddress {
-        const NAME: &'static str = "DenyAddress";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.PrivatePreferencesAction.DenyAddress".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.PrivatePreferencesAction.DenyAddress".into()
-        }
-    }
-    /// Allow V3 1:1 direct message (DM) access
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct AllowInboxId {
-        /// Add the given inbox id to the allow list
-        #[prost(string, repeated, tag = "1")]
-        pub inbox_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    }
-    impl ::prost::Name for AllowInboxId {
-        const NAME: &'static str = "AllowInboxId";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.PrivatePreferencesAction.AllowInboxId".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.PrivatePreferencesAction.AllowInboxId".into()
-        }
-    }
-    /// Deny (block) V3 1:1 direct message (DM) access
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct DenyInboxId {
-        /// Add the given inbox id to the deny list
-        #[prost(string, repeated, tag = "1")]
-        pub inbox_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    }
-    impl ::prost::Name for DenyInboxId {
-        const NAME: &'static str = "DenyInboxId";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.PrivatePreferencesAction.DenyInboxId".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.PrivatePreferencesAction.DenyInboxId".into()
-        }
-    }
-    /// Allow Group access
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct AllowGroup {
-        /// Add the given group_ids to the allow list
-        #[prost(string, repeated, tag = "1")]
-        pub group_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    }
-    impl ::prost::Name for AllowGroup {
-        const NAME: &'static str = "AllowGroup";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.PrivatePreferencesAction.AllowGroup".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.PrivatePreferencesAction.AllowGroup".into()
-        }
-    }
-    /// Deny (deny) Group access
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-    pub struct DenyGroup {
-        /// Add the given group_ids to the deny list
-        #[prost(string, repeated, tag = "1")]
-        pub group_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    }
-    impl ::prost::Name for DenyGroup {
-        const NAME: &'static str = "DenyGroup";
-        const PACKAGE: &'static str = "xmtp.message_contents";
-        fn full_name() -> ::prost::alloc::string::String {
-            "xmtp.message_contents.PrivatePreferencesAction.DenyGroup".into()
-        }
-        fn type_url() -> ::prost::alloc::string::String {
-            "/xmtp.message_contents.PrivatePreferencesAction.DenyGroup".into()
-        }
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum MessageType {
-        #[prost(message, tag = "1")]
-        AllowAddress(AllowAddress),
-        #[prost(message, tag = "2")]
-        DenyAddress(DenyAddress),
-        #[prost(message, tag = "3")]
-        AllowGroup(AllowGroup),
-        #[prost(message, tag = "4")]
-        DenyGroup(DenyGroup),
-        #[prost(message, tag = "5")]
-        AllowInboxId(AllowInboxId),
-        #[prost(message, tag = "6")]
-        DenyInboxId(DenyInboxId),
-    }
-}
-impl ::prost::Name for PrivatePreferencesAction {
-    const NAME: &'static str = "PrivatePreferencesAction";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.PrivatePreferencesAction".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.PrivatePreferencesAction".into()
-    }
-}
-/// The payload that goes over the wire
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct PrivatePreferencesPayload {
-    #[prost(oneof = "private_preferences_payload::Version", tags = "1")]
-    pub version: ::core::option::Option<private_preferences_payload::Version>,
-}
-/// Nested message and enum types in `PrivatePreferencesPayload`.
-pub mod private_preferences_payload {
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum Version {
-        #[prost(message, tag = "1")]
-        V1(super::Ciphertext),
-    }
-}
-impl ::prost::Name for PrivatePreferencesPayload {
-    const NAME: &'static str = "PrivatePreferencesPayload";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.PrivatePreferencesPayload".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.PrivatePreferencesPayload".into()
-    }
-}
 /// ContentTypeId is used to identify the type of content stored in a Message.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ContentTypeId {
@@ -1138,31 +761,6 @@ impl ::prost::Name for ContactBundle {
     }
     fn type_url() -> ::prost::alloc::string::String {
         "/xmtp.message_contents.ContactBundle".into()
-    }
-}
-/// EciesMessage is a wrapper for ECIES encrypted payloads
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct EciesMessage {
-    #[prost(oneof = "ecies_message::Version", tags = "1")]
-    pub version: ::core::option::Option<ecies_message::Version>,
-}
-/// Nested message and enum types in `EciesMessage`.
-pub mod ecies_message {
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum Version {
-        /// Expected to be an ECIES encrypted SignedPayload
-        #[prost(bytes, tag = "1")]
-        V1(::prost::alloc::vec::Vec<u8>),
-    }
-}
-impl ::prost::Name for EciesMessage {
-    const NAME: &'static str = "EciesMessage";
-    const PACKAGE: &'static str = "xmtp.message_contents";
-    fn full_name() -> ::prost::alloc::string::String {
-        "xmtp.message_contents.EciesMessage".into()
-    }
-    fn type_url() -> ::prost::alloc::string::String {
-        "/xmtp.message_contents.EciesMessage".into()
     }
 }
 /// The message that will be signed by the Client and returned inside the
@@ -1397,6 +995,31 @@ impl ::prost::Name for DecodedMessage {
         "/xmtp.message_contents.DecodedMessage".into()
     }
 }
+/// EciesMessage is a wrapper for ECIES encrypted payloads
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct EciesMessage {
+    #[prost(oneof = "ecies_message::Version", tags = "1")]
+    pub version: ::core::option::Option<ecies_message::Version>,
+}
+/// Nested message and enum types in `EciesMessage`.
+pub mod ecies_message {
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Version {
+        /// Expected to be an ECIES encrypted SignedPayload
+        #[prost(bytes, tag = "1")]
+        V1(::prost::alloc::vec::Vec<u8>),
+    }
+}
+impl ::prost::Name for EciesMessage {
+    const NAME: &'static str = "EciesMessage";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.EciesMessage".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.EciesMessage".into()
+    }
+}
 /// SignedPayload is a wrapper for a signature and a payload
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SignedPayload {
@@ -1413,5 +1036,382 @@ impl ::prost::Name for SignedPayload {
     }
     fn type_url() -> ::prost::alloc::string::String {
         "/xmtp.message_contents.SignedPayload".into()
+    }
+}
+/// PrivatePreferencesAction is a message used to update the client's preference
+/// store.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PrivatePreferencesAction {
+    #[prost(
+        oneof = "private_preferences_action::MessageType",
+        tags = "1, 2, 3, 4, 5, 6"
+    )]
+    pub message_type: ::core::option::Option<private_preferences_action::MessageType>,
+}
+/// Nested message and enum types in `PrivatePreferencesAction`.
+pub mod private_preferences_action {
+    /// Allow 1:1 direct message (DM) access
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct AllowAddress {
+        /// Add the given wallet addresses to the allow list
+        #[prost(string, repeated, tag = "1")]
+        pub wallet_addresses: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    }
+    impl ::prost::Name for AllowAddress {
+        const NAME: &'static str = "AllowAddress";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.PrivatePreferencesAction.AllowAddress".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.PrivatePreferencesAction.AllowAddress".into()
+        }
+    }
+    /// Deny (block) 1:1 direct message (DM) access
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct DenyAddress {
+        /// Add the given wallet addresses to the deny list
+        #[prost(string, repeated, tag = "1")]
+        pub wallet_addresses: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    }
+    impl ::prost::Name for DenyAddress {
+        const NAME: &'static str = "DenyAddress";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.PrivatePreferencesAction.DenyAddress".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.PrivatePreferencesAction.DenyAddress".into()
+        }
+    }
+    /// Allow V3 1:1 direct message (DM) access
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct AllowInboxId {
+        /// Add the given inbox id to the allow list
+        #[prost(string, repeated, tag = "1")]
+        pub inbox_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    }
+    impl ::prost::Name for AllowInboxId {
+        const NAME: &'static str = "AllowInboxId";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.PrivatePreferencesAction.AllowInboxId".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.PrivatePreferencesAction.AllowInboxId".into()
+        }
+    }
+    /// Deny (block) V3 1:1 direct message (DM) access
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct DenyInboxId {
+        /// Add the given inbox id to the deny list
+        #[prost(string, repeated, tag = "1")]
+        pub inbox_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    }
+    impl ::prost::Name for DenyInboxId {
+        const NAME: &'static str = "DenyInboxId";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.PrivatePreferencesAction.DenyInboxId".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.PrivatePreferencesAction.DenyInboxId".into()
+        }
+    }
+    /// Allow Group access
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct AllowGroup {
+        /// Add the given group_ids to the allow list
+        #[prost(string, repeated, tag = "1")]
+        pub group_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    }
+    impl ::prost::Name for AllowGroup {
+        const NAME: &'static str = "AllowGroup";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.PrivatePreferencesAction.AllowGroup".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.PrivatePreferencesAction.AllowGroup".into()
+        }
+    }
+    /// Deny (deny) Group access
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct DenyGroup {
+        /// Add the given group_ids to the deny list
+        #[prost(string, repeated, tag = "1")]
+        pub group_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    }
+    impl ::prost::Name for DenyGroup {
+        const NAME: &'static str = "DenyGroup";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.PrivatePreferencesAction.DenyGroup".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.PrivatePreferencesAction.DenyGroup".into()
+        }
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum MessageType {
+        #[prost(message, tag = "1")]
+        AllowAddress(AllowAddress),
+        #[prost(message, tag = "2")]
+        DenyAddress(DenyAddress),
+        #[prost(message, tag = "3")]
+        AllowGroup(AllowGroup),
+        #[prost(message, tag = "4")]
+        DenyGroup(DenyGroup),
+        #[prost(message, tag = "5")]
+        AllowInboxId(AllowInboxId),
+        #[prost(message, tag = "6")]
+        DenyInboxId(DenyInboxId),
+    }
+}
+impl ::prost::Name for PrivatePreferencesAction {
+    const NAME: &'static str = "PrivatePreferencesAction";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.PrivatePreferencesAction".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.PrivatePreferencesAction".into()
+    }
+}
+/// The payload that goes over the wire
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PrivatePreferencesPayload {
+    #[prost(oneof = "private_preferences_payload::Version", tags = "1")]
+    pub version: ::core::option::Option<private_preferences_payload::Version>,
+}
+/// Nested message and enum types in `PrivatePreferencesPayload`.
+pub mod private_preferences_payload {
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Version {
+        #[prost(message, tag = "1")]
+        V1(super::Ciphertext),
+    }
+}
+impl ::prost::Name for PrivatePreferencesPayload {
+    const NAME: &'static str = "PrivatePreferencesPayload";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.PrivatePreferencesPayload".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.PrivatePreferencesPayload".into()
+    }
+}
+/// PrivateKey generalized to support different key types
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SignedPrivateKey {
+    /// time the key was created
+    #[prost(uint64, tag = "1")]
+    pub created_ns: u64,
+    /// public key for this private key
+    #[prost(message, optional, tag = "3")]
+    pub public_key: ::core::option::Option<SignedPublicKey>,
+    /// private key
+    #[prost(oneof = "signed_private_key::Union", tags = "2")]
+    pub union: ::core::option::Option<signed_private_key::Union>,
+}
+/// Nested message and enum types in `SignedPrivateKey`.
+pub mod signed_private_key {
+    /// EC: SECP256k1
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct Secp256k1 {
+        /// D big-endian, 32 bytes
+        #[prost(bytes = "vec", tag = "1")]
+        pub bytes: ::prost::alloc::vec::Vec<u8>,
+    }
+    impl ::prost::Name for Secp256k1 {
+        const NAME: &'static str = "Secp256k1";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.SignedPrivateKey.Secp256k1".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.SignedPrivateKey.Secp256k1".into()
+        }
+    }
+    /// private key
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Union {
+        #[prost(message, tag = "2")]
+        Secp256k1(Secp256k1),
+    }
+}
+impl ::prost::Name for SignedPrivateKey {
+    const NAME: &'static str = "SignedPrivateKey";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.SignedPrivateKey".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.SignedPrivateKey".into()
+    }
+}
+/// PrivateKeyBundle wraps the identityKey and the preKeys,
+/// enforces usage of signed keys.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PrivateKeyBundleV2 {
+    #[prost(message, optional, tag = "1")]
+    pub identity_key: ::core::option::Option<SignedPrivateKey>,
+    /// all the known pre-keys, newer keys first,
+    #[prost(message, repeated, tag = "2")]
+    pub pre_keys: ::prost::alloc::vec::Vec<SignedPrivateKey>,
+}
+impl ::prost::Name for PrivateKeyBundleV2 {
+    const NAME: &'static str = "PrivateKeyBundleV2";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.PrivateKeyBundleV2".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.PrivateKeyBundleV2".into()
+    }
+}
+/// LEGACY: PrivateKey generalized to support different key types
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PrivateKey {
+    /// time the key was created
+    #[prost(uint64, tag = "1")]
+    pub timestamp: u64,
+    /// public key for this private key
+    #[prost(message, optional, tag = "3")]
+    pub public_key: ::core::option::Option<PublicKey>,
+    /// private key
+    #[prost(oneof = "private_key::Union", tags = "2")]
+    pub union: ::core::option::Option<private_key::Union>,
+}
+/// Nested message and enum types in `PrivateKey`.
+pub mod private_key {
+    /// EC: SECP256k1
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+    pub struct Secp256k1 {
+        /// D big-endian, 32 bytes
+        #[prost(bytes = "vec", tag = "1")]
+        pub bytes: ::prost::alloc::vec::Vec<u8>,
+    }
+    impl ::prost::Name for Secp256k1 {
+        const NAME: &'static str = "Secp256k1";
+        const PACKAGE: &'static str = "xmtp.message_contents";
+        fn full_name() -> ::prost::alloc::string::String {
+            "xmtp.message_contents.PrivateKey.Secp256k1".into()
+        }
+        fn type_url() -> ::prost::alloc::string::String {
+            "/xmtp.message_contents.PrivateKey.Secp256k1".into()
+        }
+    }
+    /// private key
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Union {
+        #[prost(message, tag = "2")]
+        Secp256k1(Secp256k1),
+    }
+}
+impl ::prost::Name for PrivateKey {
+    const NAME: &'static str = "PrivateKey";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.PrivateKey".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.PrivateKey".into()
+    }
+}
+/// LEGACY: PrivateKeyBundleV1 wraps the identityKey and the preKeys
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PrivateKeyBundleV1 {
+    #[prost(message, optional, tag = "1")]
+    pub identity_key: ::core::option::Option<PrivateKey>,
+    /// all the known pre-keys, newer keys first,
+    #[prost(message, repeated, tag = "2")]
+    pub pre_keys: ::prost::alloc::vec::Vec<PrivateKey>,
+}
+impl ::prost::Name for PrivateKeyBundleV1 {
+    const NAME: &'static str = "PrivateKeyBundleV1";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.PrivateKeyBundleV1".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.PrivateKeyBundleV1".into()
+    }
+}
+/// Versioned PrivateKeyBundle
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PrivateKeyBundle {
+    #[prost(oneof = "private_key_bundle::Version", tags = "1, 2")]
+    pub version: ::core::option::Option<private_key_bundle::Version>,
+}
+/// Nested message and enum types in `PrivateKeyBundle`.
+pub mod private_key_bundle {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Version {
+        #[prost(message, tag = "1")]
+        V1(super::PrivateKeyBundleV1),
+        #[prost(message, tag = "2")]
+        V2(super::PrivateKeyBundleV2),
+    }
+}
+impl ::prost::Name for PrivateKeyBundle {
+    const NAME: &'static str = "PrivateKeyBundle";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.PrivateKeyBundle".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.PrivateKeyBundle".into()
+    }
+}
+/// PrivateKeyBundle encrypted with key material generated by
+/// signing a randomly generated "pre-key" with the user's wallet,
+/// i.e. EIP-191 signature of a "storage signature" message with
+/// the pre-key embedded in it.
+/// (see xmtp-js::PrivateKeyBundle.toEncryptedBytes for details)
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct EncryptedPrivateKeyBundleV1 {
+    /// randomly generated pre-key
+    ///
+    /// 32 bytes
+    #[prost(bytes = "vec", tag = "1")]
+    pub wallet_pre_key: ::prost::alloc::vec::Vec<u8>,
+    /// MUST contain encrypted PrivateKeyBundle
+    #[prost(message, optional, tag = "2")]
+    pub ciphertext: ::core::option::Option<Ciphertext>,
+}
+impl ::prost::Name for EncryptedPrivateKeyBundleV1 {
+    const NAME: &'static str = "EncryptedPrivateKeyBundleV1";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.EncryptedPrivateKeyBundleV1".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.EncryptedPrivateKeyBundleV1".into()
+    }
+}
+/// Versioned encrypted PrivateKeyBundle
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct EncryptedPrivateKeyBundle {
+    #[prost(oneof = "encrypted_private_key_bundle::Version", tags = "1")]
+    pub version: ::core::option::Option<encrypted_private_key_bundle::Version>,
+}
+/// Nested message and enum types in `EncryptedPrivateKeyBundle`.
+pub mod encrypted_private_key_bundle {
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Version {
+        #[prost(message, tag = "1")]
+        V1(super::EncryptedPrivateKeyBundleV1),
+    }
+}
+impl ::prost::Name for EncryptedPrivateKeyBundle {
+    const NAME: &'static str = "EncryptedPrivateKeyBundle";
+    const PACKAGE: &'static str = "xmtp.message_contents";
+    fn full_name() -> ::prost::alloc::string::String {
+        "xmtp.message_contents.EncryptedPrivateKeyBundle".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/xmtp.message_contents.EncryptedPrivateKeyBundle".into()
     }
 }
